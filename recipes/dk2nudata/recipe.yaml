@@ -41,11 +41,11 @@ requirements:
     - make
   host:
     - root_base                  # dk2nuTree links ROOT + uses rootcling for the dict
-    # Pin cxx_standard 23 to MATCH the art stack (canvas_root_io etc. were built
-    # against root_cxx_standard==23). Without a canvas_root_io puller here, the
-    # solver would otherwise pick the cxx20 root_base variant, and dk2nudata's
-    # run_export (==20) would then conflict with the rest of the suite (==23).
-    - root_cxx_standard ==23
+    # Pin cxx_standard 20 to MATCH the (boost-1.90-rebuilt) art stack: canvas_root_io
+    # etc. are now built against root_cxx_standard==20 + root_base 6.36.6. Without a
+    # canvas_root_io puller here, this pin keeps dk2nudata's run_export aligned with
+    # the rest of the suite. (The art-stack-boost190 variant config also sets cxx20.)
+    - root_cxx_standard ==20
   run:
   run_exports:
     - ${{ pin_subpackage('dk2nudata', upper_bound='x.x') }}
