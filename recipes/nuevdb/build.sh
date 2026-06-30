@@ -12,6 +12,22 @@ export DK2NUDATA_INC="$PREFIX/include"
 # wda.h via $LIBWDA_INC, then derives lib/ and builds the wda::wda imported target.
 export LIBWDA_INC="$PREFIX/include"
 
+# --- ROOT-6.36 rootcling / fhiclcpp 4.19.0 coding.h fix --------------------
+# coding.h DECLARES the "none of the above" encode<T> with a requires-clause
+# (`requires(!std::is_arithmetic_v<T>)`) but DEFINES it with the `non_numeric`
+# concept. clang's concept normalisation (in ROOT 6.36 rootcling) rejects the
+# mismatch -> "out-of-line definition of 'encode' does not match any declaration"
+# when the EventDisplayBase dictionary pulls in ParameterSet.h -> coding.h. GCC
+# accepts it (fhiclcpp itself builds fine). Align the definition's constraint to
+# the declaration's requires-clause so rootcling can match them (header-only,
+# build-time only, no ABI change). Same fix is needed for lareventdisplay.
+_coding="$PREFIX/include/fhiclcpp/coding.h"
+if grep -q '^template <fhicl::detail::non_numeric T> // none of the above' "$_coding"; then
+  chmod u+w "$_coding"
+  sed -i 's|^template <fhicl::detail::non_numeric T> // none of the above|template <class T> // none of the above\n  requires(!std::is_arithmetic_v<T>)|' "$_coding"
+  echo "patched fhiclcpp coding.h (non_numeric concept -> requires-clause) for rootcling"
+fi
+
 mkdir -p build
 cd build
 
