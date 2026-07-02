@@ -27,6 +27,12 @@ source:
     # set_property(TEST ...) on tests cet_test() only registers when
     # BUILD_TESTING=ON, so -DBUILD_TESTING=OFF hard-fails. Guard the test subdir.
     - patches/0001-guard-test-subdir-build-testing.patch
+    # C++20 std::ranges migration for Geometry/Iterable.h: range-v3's top-level
+    # `namespace ranges` is ambiguous with std::ranges under cling's implicit
+    # `using namespace std;`, breaking ROOT dictionary generation in downstream
+    # consumers (dunecore Geometry dict). Iterable.h only uses make_subrange ->
+    # std::ranges::subrange. See conda/RANGE_V3_CLING_DICT_CLASH.md.
+    - patches/0002-iterable-std-ranges-cxx20.patch
 
 build:
   number: 0
