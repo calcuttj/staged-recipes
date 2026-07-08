@@ -1,0 +1,14 @@
+# Same toolchain pin as the other dune-suite recipes (sysroot 2.17 / manylinux2014).
+c_stdlib:
+  - sysroot    # [linux]
+c_stdlib_version:
+  - "2.17"    # [linux]
+
+# Pin ROOT to 6.36.6 to match the established DUNE/larsoft conda stack (genie,
+# tpythia6, edepsim, duneanaobj 4.0.0). The host deps already force 6.36
+# transitively, but pin explicitly so rebuilds don't drift to conda-forge's
+# newer default. 6.36.6 pairs with root_cxx_standard 20.
+root_base:
+  - "6.36.6"
+root_cxx_standard:
+  - "20"
