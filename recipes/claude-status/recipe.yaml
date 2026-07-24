@@ -1,0 +1,39 @@
+context:
+  version: "0.1.0"
+  commit: 813a6c7730f074c9dc5824e7ec159830ae1fd1c3
+  python_min: "3.12"
+
+package:
+  name: claude-status
+  version: ${{ version }}
+
+source:
+  url: https://github.com/brettviren/claude-status/archive/${{ commit }}.tar.gz
+  sha256: ccea6f7d3c63228fb173a2c50672293ffb1c600c127f476ff7f0c0c3c663d5b7
+
+build:
+  noarch: python
+  script: ${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
+
+requirements:
+  # note that there is no build section
+  host:
+    - pip
+    - python ${{ python_min }}.*
+    - setuptools >=61
+    - wheel
+  run:
+    - python >=${{ python_min }}
+
+tests:
+  - python:
+      imports:
+        - claude_status
+      pip_check: true
+      python_version: ${{ python_min }}.*
+  - script:
+      - claude-status --help
+
+about:
+  homepage: https://github.com/brettviren/claude-status
+  summary: Show information about your current claude usage
